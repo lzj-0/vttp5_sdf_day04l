@@ -31,20 +31,25 @@ public class FileUpload {
 
         File f = new File(filename);
 
-        if (f.exists()) {
-            dos.writeUTF(filename);
-            System.out.println("file name sent to server");
-            dos.writeLong(f.length());
-            System.out.println("file size sent to server");
-            
-            InputStream fis = new FileInputStream(filename);
-            for (int bytes = 0; bytes < f.length(); bytes++) {
-                dos.write(fis.read());
-            }
-            System.out.println("file contents sent to server");
-            fis.close();
+        if (!(f.exists() && f.isFile())) {
+            System.err.printf("%s is not a file\n", filename);
+            System.exit(-1);
         }
+
+        dos.writeUTF(filename);
+        System.out.println("file name sent to server");
+        dos.writeLong(f.length());
+        System.out.println("file size sent to server");
+        
+        InputStream fis = new FileInputStream(filename);
+        for (int bytes = 0; bytes < f.length(); bytes++) {
+            dos.write(fis.read());
+        }
+        System.out.println("file contents sent to server");
+        fis.close();
+
         dos.flush();
+        os.flush();
         dos.close();
         os.close();
         socket.close();
